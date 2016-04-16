@@ -1,0 +1,50 @@
+---
+- 
+  type: text
+  path: .name
+  label: テーブル名
+- 
+  type: text
+  path: .description
+  label: 説明
+-
+  type: table
+  path: .columns
+  label: カラム一覧
+  data_type: dictionary
+  columns:
+    - 
+      type: text
+      path: key
+      label: 物理名
+    -
+      type: text
+      path: this.label
+      label: 論理名
+    -
+      type: select
+      path: this.type
+      label: 型
+      options:
+        - int(11)
+        - smallint(6)
+        - datetime
+        - varchar(255)
+        - varchar(64)
+        - varchar(32)
+        - varchar(8)
+        - text
+    -
+      type: checkbox
+      path: this.is_not_null
+      label: NotNull
+      checked:
+        value: true
+        label: 'Yes'
+      unchecked:
+        value: false
+        label: ''
+    - 
+      type: text
+      path: this.description
+      label: 備考
