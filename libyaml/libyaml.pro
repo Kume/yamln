@@ -15,11 +15,13 @@ include(libyaml.pri)
 DEFINES += LIBYAML_LIBRARY
 
 SOURCES += libyaml.cpp \
-    yamlobject.cpp
+    yamlobject.cpp \
+    libyamlexception.cpp
 
 HEADERS += libyaml.h\
         libyaml_global.h \
-    yamlobject.h
+    yamlobject.h \
+    libyamlexception.h
 
 unix {
     target.path = /usr/lib

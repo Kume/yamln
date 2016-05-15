@@ -9,7 +9,54 @@ YamlObject::YamlObject(QObject *parent) : QObject(parent)
 
 }
 
-YamlObject* YamlObject::fromFile(const QString &fileName)
+YamlObject::~YamlObject()
+{
+
+}
+
+YamlObject* YamlObject::integer(int n, QObject *parent)
+{
+    auto object = new YamlObject(parent);
+    object->m_type = TypeInteger;
+    object->m_basicValue.intValue = n;
+    return object;
+}
+
+YamlObject* YamlObject::string(const QString &text, QObject *parent)
+{
+    auto object = new YamlObject(parent);
+    object->m_type = TypeString;
+    object->m_stringValue = text;
+    return object;
+}
+
+YamlObject* YamlObject::Array(QObject *parent)
+{
+    auto object = new YamlObject(parent);
+    object->m_type = TypeArray;
+    object->m_variableValue = std::unique_ptr<VariableValue>();
+    return object;
+}
+
+YamlObject* YamlObject::Object(QObject *parent)
+{
+    auto object = new YamlObject(parent);
+    object->m_type = TypeObject;
+    object->m_variableValue = std::unique_ptr<VariableValue>();
+    return object;
+}
+
+YamlObjectPtr YamlObject::operator [](const QString &key) const
+{
+    return m_variableValue->map[key];
+}
+
+void YamlObject::append(YamlObjectPtr &object)
+{
+    m_variableValue->list.append(object);
+}
+
+YamlObject* YamlObject::fromFile(const QString &fileName, QObject *parent)
 {
     auto stdFileName = fileName.toStdString();
     FILE *file = fopen(stdFileName.c_str(), "r");

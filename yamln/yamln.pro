@@ -3,7 +3,11 @@ TEMPLATE = app
 QT += qml quick
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    uiviewmodel/uiviewmodel.cpp \
+    uiviewmodel/textuiviewmodel.cpp \
+    uiviewmodel/formuiviewmodel.cpp \
+    uiviewmodel/rootuiviewmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -19,3 +23,9 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../liby
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libyaml/release/libyaml.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libyaml/debug/libyaml.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../libyaml/liblibyaml.a
+
+HEADERS += \
+    uiviewmodel/uiviewmodel.h \
+    uiviewmodel/textuiviewmodel.h \
+    uiviewmodel/formuiviewmodel.h \
+    uiviewmodel/rootuiviewmodel.h
