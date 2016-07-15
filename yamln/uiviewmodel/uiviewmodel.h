@@ -2,11 +2,17 @@
 #define UIVIEWMODEL_H
 
 #include <QObject>
+#include <QVector>
 #include "yamlobject.h"
+#include "yamlpath.h"
+
+class RootUIViewModel;
 
 class UIViewModel : public QObject
 {
     Q_OBJECT
+
+public:
 
     enum class Type : int {
         Root,
@@ -17,16 +23,66 @@ class UIViewModel : public QObject
         Text,
         Select,
     };
+    Q_ENUM(Type)
 
-public:
+    explicit UIViewModel(UIViewModel *parent = 0);
+
+    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+    Q_PROPERTY(bool isVisible READ isVisible NOTIFY isVisibleChanged)
+    Q_PROPERTY(YamlPath path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QString type READ type NOTIFY typeChanged)
+
+    QString label() const;
+    void setLabel(QString label);
+    bool isVisible() const;
+    YamlPath path() const;
+    virtual QString type() const;
+    UIViewModel *parentViewModel() const;
+    virtual RootUIViewModel *rootViewModel();
 
 protected:
-    explicit UIViewModel(QObject *parent = 0);
-    static UIViewModel* createUIViewModel(YamlObject* source, UIViewModel* parent);
+    explicit UIViewModel(QObject *parent);
+
+    static UIViewModel* createUIViewModel(UIViewModel *parent, const YamlObjectPtr &source);
+    static UIViewModel* createAtomicUIViewModel(UIViewModel *parent, const YamlObjectPtr &source);
+
+    void setIsVisible(bool isVisible);
+    void setPath(const YamlPath& path);
+    void setBasicValues(const YamlObjectPtr &spec);
+
+    // utilities
+    static void validateYamlObjectType(const QString& objectName,
+                                       const YamlObjectPtr& object,
+                                       YamlObject::Type expectedType);
+    static void validateYamlObjectPropertyExistence(const QString& objectName,
+                                                    const YamlObjectPtr& object,
+                                                    const QString& propertyName);
+    static void validateYamlObjectProperty(const QString& objectName,
+                                           const YamlObjectPtr& object,
+                                           const QString& propertyName,
+                                           YamlObject::Type expectedType);
+    static void validateYamlObjectProperty(const QString& objectName,
+                                           const YamlObjectPtr& object,
+                                           const QString& propertyName,
+                                           QVector<YamlObject::Type> expectedTypes);
+
+private:
+    void setType(QString type);
 
 signals:
+    void labelChanged();
+    void isVisibleChanged();
+    void pathChanged();
+
+    void typeChanged(QString type);
 
 public slots:
+
+private:
+    QString m_label;
+    YamlPath m_path;
+    bool m_isVisible;
+    QString m_type;
 };
 
 #endif // UIVIEWMODEL_H

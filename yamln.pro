@@ -1,5 +1,9 @@
 TEMPLATE = subdirs
 
+CONFIG += ordered
+
 SUBDIRS += \
+    libyaml \
     yamln \
-    libyaml
+
+yamln.deponds = libyaml

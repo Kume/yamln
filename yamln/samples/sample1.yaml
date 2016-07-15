@@ -1,8 +1,7 @@
 ---
--
-  type: form
-  path: tables
-  contents: 
+type: form
+path: tables
+contents:
     - 
       type: text
       path: .name
@@ -14,7 +13,7 @@
     -
       type: table
       path: .columns
-      label: カラム一覧
+      label: "カラム一覧"
       data_type: dictionary
       columns:
         - 
@@ -26,7 +25,7 @@
           path: this.label
           label: 論理名
         -
-          type: select
+          type: text
           path: this.type
           label: 型
           options:

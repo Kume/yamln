@@ -3,10 +3,26 @@
 
 #include "uiviewmodel.h"
 
-class RootUiViewModel : public UIViewModel
+class RootUIViewModel : public UIViewModel
 {
+    Q_OBJECT
 public:
-    RootUiViewModel(QObject* parent);
+    Q_PROPERTY(UIViewModel* content READ content WRITE setContent NOTIFY contentChanged)
+
+    RootUIViewModel(QObject* parent, const YamlObjectPtr &spec);
+
+
+    UIViewModel* content() const;
+private slots:
+    void setContent(UIViewModel* content);
+signals:
+    void contentChanged(UIViewModel* content);
+private:
+    UIViewModel* m_content;
+
+    // UIViewModel interface
+public:
+    virtual RootUIViewModel *rootViewModel() override;
 };
 
 #endif // ROOTUIVIEWMODEL_H

@@ -1,6 +1,14 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MainForm.ui.qml</file>
+        <file>Form.qml</file>
+        <file>FormElement.qml</file>
+        <file>TextUIView.qml</file>
+        <file>BasicUIStyle.qml</file>
+        <file>TableUIView.qml</file>
+        <file>TableRowUIView.qml</file>
+        <file>CheckboxUIView.qml</file>
+        <file>TableHeaderUIView.qml</file>
+        <file>TableCellUIView.qml</file>
     </qresource>
 </RCC>

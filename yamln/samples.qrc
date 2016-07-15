@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>samples/sample1.yaml</file>
+    </qresource>
+</RCC>
