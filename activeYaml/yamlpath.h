@@ -3,6 +3,13 @@
 
 #include <QString>
 
+namespace ActiveYaml
+{
+class YamlPathElement
+{
+
+};
+
 class YamlPath
 {
 public:
@@ -10,5 +17,6 @@ public:
 
     static YamlPath parse(const QString& path);
 };
+}
 
 #endif // YAMLPATH_H

@@ -7,6 +7,9 @@
 #include <memory>
 #include <functional>
 
+namespace ActiveYaml
+{
+
 class YamlObject;
 typedef QSharedPointer<YamlObject> YamlObjectPtr;
 
@@ -41,6 +44,9 @@ public:
 
     QString dump() const;
     QVariant toQVariant() const;
+
+    // for integer
+    int integerValue() const;
 
     // for string
     QString stringValue() const;
@@ -99,15 +105,17 @@ private:
     };
     std::unique_ptr<VariableValue> m_variableValue;
 };
+}
 
-inline uint qHash(const YamlObjectPtr &yamlObject, uint seed = 0)
+inline uint qHash(const ActiveYaml::YamlObjectPtr &yamlObject, uint seed = 0)
 {
     return yamlObject->getHash(seed);
 }
 
-inline bool operator==(const YamlObjectPtr &lhs, const YamlObjectPtr &rhs)
+inline bool operator==(const ActiveYaml::YamlObjectPtr &lhs, const ActiveYaml::YamlObjectPtr &rhs)
 {
     return *lhs == *rhs;
 }
+
 
 #endif // YAMLOBJECT_H

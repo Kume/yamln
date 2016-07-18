@@ -1,5 +1,7 @@
 #include "yamlobjectexception.h"
 
+using namespace ActiveYaml;
+
 YamlObjectException::YamlObjectException(const QString& message, YamlObjectPtr context) :
     YamlnException(message)
 {

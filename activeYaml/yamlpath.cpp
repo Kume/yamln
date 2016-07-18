@@ -1,5 +1,7 @@
 #include "yamlpath.h"
 
+using namespace ActiveYaml;
+
 YamlPath::YamlPath()
 {
 

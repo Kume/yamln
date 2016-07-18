@@ -12,6 +12,11 @@ UIViewModel::UIViewModel(UIViewModel *parent) : QObject(parent)
 
 }
 
+UIViewModel::~UIViewModel()
+{
+
+}
+
 UIViewModel* UIViewModel::createUIViewModel(UIViewModel *parent, const YamlObjectPtr &spec)
 {
     auto atomicUiViewModel = createAtomicUIViewModel(parent, spec);

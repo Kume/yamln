@@ -3,7 +3,8 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    libyaml \
     yamln \
+    tests \
+    activeYaml
 
-yamln.deponds = libyaml
+yamln.deponds = activeYaml

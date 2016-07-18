@@ -4,6 +4,8 @@
 #include "yamlnexception.h"
 #include "yamlobject.h"
 
+using namespace ActiveYaml;
+
 class UIDefinitionException : public YamlnException
 {
 public:

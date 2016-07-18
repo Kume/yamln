@@ -4,6 +4,8 @@
 #include "yamlnexception.h"
 #include "yamlobject.h"
 
+namespace ActiveYaml {
+
 class YamlObjectException : public YamlnException
 {
 public:
@@ -14,5 +16,7 @@ public:
 private:
     YamlObjectPtr m_context;
 };
+
+}
 
 #endif // YAMLOBJECTEXCEPTION_H

@@ -1,30 +1,27 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-04-10T14:34:23
+# Project created by QtCreator 2016-07-18T19:37:17
 #
 #-------------------------------------------------
 
 QT       -= gui
 
-TARGET = libyaml
+TARGET = activeYaml
 TEMPLATE = lib
 CONFIG += staticlib
 
 include(libyaml.pri)
 
-DEFINES += LIBYAML_LIBRARY
-
-SOURCES += libyaml.cpp \
+SOURCES += \
     yamlobject.cpp \
-    libyamlexception.cpp \
+    activeyamlexception.cpp \
     yamlpath.cpp \
     action/yamlaction.cpp \
     action/modifyyamlaction.cpp
 
-HEADERS += libyaml.h\
-        libyaml_global.h \
+HEADERS += activeyaml.h \
     yamlobject.h \
-    libyamlexception.h \
+    activeyamlexception.h \
     yamlpath.h \
     action/yamlaction.h \
     action/modifyyamlaction.h

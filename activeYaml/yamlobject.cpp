@@ -6,7 +6,9 @@
 #include <QVector>
 #include <QStringBuilder>
 
-#include "libyamlexception.h"
+#include "activeyamlexception.h"
+
+using namespace ActiveYaml;
 
 bool YamlObject::isDebugOutputEnabled = false;
 
@@ -102,13 +104,13 @@ QString YamlObject::typeToName(Type type)
     case TypeNull:
         return "null";
     }
-    throw LibYamlTypeException("");
+    throw ActiveYamlTypeException("");
 }
 
 QString YamlObject::stringValue() const
 {
     if (m_type != TypeString) {
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
     return m_stringValue;
 }
@@ -126,7 +128,7 @@ YamlObjectPtr YamlObject::operator [](const QString &key) const
 YamlObjectPtr YamlObject::value(const YamlObjectPtr &key) const
 {
     if (m_type != TypeObject) {
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
     const QHash<YamlObjectPtr, YamlObjectPtr> &map = m_variableValue->map;
     return map.value(key);
@@ -140,7 +142,7 @@ YamlObjectPtr YamlObject::value(const QString &key) const
 YamlObjectPtr YamlObject::insert(const YamlObjectPtr &key, const YamlObjectPtr &value)
 {
     if (m_type != TypeObject) {
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
     if (!m_variableValue->map.contains(key)) {
         m_variableValue->list.append(key);
@@ -156,7 +158,7 @@ YamlObjectPtr YamlObject::insert(const QString &key, const YamlObjectPtr &value)
 YamlObjectPtr YamlObject::removeAt(const YamlObjectPtr &key)
 {
     if (m_type != TypeObject) {
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
     if (!m_variableValue->map.contains(key)) {
         YamlObjectPtr ret = m_variableValue->map[key];
@@ -176,7 +178,7 @@ YamlObjectPtr YamlObject::removeAt(const QString &key)
 bool YamlObject::contains(const YamlObjectPtr &key) const
 {
     if (m_type != TypeObject) {
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
     const QHash<YamlObjectPtr, YamlObjectPtr> &map = m_variableValue->map;
     return map.contains(key);
@@ -191,7 +193,7 @@ bool YamlObject::contains(const QString &key) const
 YamlObjectPtr YamlObject::insert(int index, const YamlObjectPtr &value)
 {
     if (m_type != TypeArray) {
-        throw LibYamlException("");
+        throw ActiveYamlException("");
     }
     m_variableValue->list.insert(index, value);
     return value;
@@ -200,7 +202,7 @@ YamlObjectPtr YamlObject::insert(int index, const YamlObjectPtr &value)
 void YamlObject::append(YamlObjectPtr &object)
 {
     if (m_type != TypeArray) {
-        throw LibYamlException("");
+        throw ActiveYamlException("");
     }
     m_variableValue->list.append(object);
 }
@@ -230,7 +232,7 @@ YamlObjectPtr YamlObject::remove(const YamlObjectPtr &value)
         }
 
     default:
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
 }
 
@@ -248,11 +250,11 @@ uint YamlObject::getHash(uint seed) const
 
     case TypeObject:
         // Hashのキーにはならないはず。。
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
 
     case TypeArray:
         // Hashのキーにはならないはず。。
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
 
     case TypeInteger:
         return qHash(this->m_basicValue.intValue, seed);
@@ -270,7 +272,7 @@ uint YamlObject::getHash(uint seed) const
         return 1;
     }
 
-    throw LibYamlTypeException("");
+    throw ActiveYamlTypeException("");
 }
 
 bool YamlObject::operator ==(const YamlObject &another) const
@@ -349,7 +351,7 @@ bool YamlObject::operator ==(const YamlObject &another) const
         return true;
 
     default:
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
     }
 }
 
@@ -357,7 +359,7 @@ QString YamlObject::toString() const
 {
     switch (this->type()) {
     case TypeNone:
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
 
     case TypeObject:
         return "{}"; // TODO
@@ -448,7 +450,7 @@ YamlObjectPtr YamlObject::fromFile(QFile &file)
 void exec_event(yaml_emitter_t &emitter, yaml_event_t &event)
 {
     if (!yaml_emitter_emit(&emitter, &event)) {
-        throw LibYamlEmitterException("");
+        throw ActiveYamlEmitterException("");
     }
 }
 
@@ -456,7 +458,7 @@ void stream_start_event(yaml_emitter_t &emitter)
 {
     yaml_event_t event;
     if (!yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING)) {
-        throw LibYamlEmitterException("");
+        throw ActiveYamlEmitterException("");
     }
     exec_event(emitter, event);
 }
@@ -465,7 +467,7 @@ void document_start_event(yaml_emitter_t &emitter)
 {
     yaml_event_t event;
     if (!yaml_document_start_event_initialize(&event, 0, 0, 0, 0)) {
-        throw LibYamlEmitterException("");
+        throw ActiveYamlEmitterException("");
     }
     exec_event(emitter, event);
 }
@@ -474,7 +476,7 @@ void document_end_event(yaml_emitter_t &emitter)
 {
     yaml_event_t event;
     if (!yaml_document_end_event_initialize(&event, 0)) {
-        throw LibYamlEmitterException("");
+        throw ActiveYamlEmitterException("");
     }
     exec_event(emitter, event);
 }
@@ -483,7 +485,7 @@ void stream_end_event(yaml_emitter_t &emitter)
 {
     yaml_event_t event;
     if (!yaml_stream_end_event_initialize(&event)) {
-        throw LibYamlEmitterException("");
+        throw ActiveYamlEmitterException("");
     }
     exec_event(emitter, event);
 }
@@ -512,7 +514,7 @@ QString YamlObject::dump() const
         stream_end_event(emitter);
         yaml_emitter_delete(&emitter);
     }
-    catch (LibYamlEmitterException &ex)
+    catch (ActiveYamlEmitterException &ex)
     {
         yaml_emitter_delete(&emitter);
         throw;
@@ -524,7 +526,7 @@ QVariant YamlObject::toQVariant() const
 {
     switch (this->type()) {
     case TypeNone:
-        throw LibYamlTypeException("");
+        throw ActiveYamlTypeException("");
 
     case TypeObject:
     {
@@ -559,6 +561,14 @@ QVariant YamlObject::toQVariant() const
     case TypeNull:
         return QVariant();
     }
+}
+
+int YamlObject::integerValue() const
+{
+    if (m_type != TypeInteger) {
+        throw ActiveYamlTypeException("");
+    }
+    return m_basicValue.intValue;
 }
 
 void YamlObject::emitYaml(void *emitter) const
@@ -768,7 +778,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
                 case YamlObject::TypeObject:
                     if (mapKeys.last().isNull()) {
                         // keyに配列は指定できない想定
-                        throw LibYamlTypeException("");
+                        throw ActiveYamlTypeException("");
                     } else {
                         YamlObjectPtr key = mapKeys.last();
                         objectStack.last()->insert(key, yamlValue);
@@ -805,7 +815,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
                 case YamlObject::TypeObject:
                     if (mapKeys.last().isNull()) {
                         // keyにobjectは指定できない想定
-                        throw LibYamlTypeException("");
+                        throw ActiveYamlTypeException("");
                     } else {
                         YamlObjectPtr key = mapKeys.last();
                         objectStack.last()->insert(key, yamlValue);

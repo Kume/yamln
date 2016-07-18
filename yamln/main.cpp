@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include <../libyaml/yamlobject.h>
+#include "activeyaml.h"
 #include <QList>
 #include <QFile>
 #include <QDir>

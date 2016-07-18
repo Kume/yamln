@@ -6,6 +6,8 @@
 #include "yamlobject.h"
 #include "yamlpath.h"
 
+using namespace ActiveYaml;
+
 class RootUIViewModel;
 
 class UIViewModel : public QObject
@@ -26,6 +28,7 @@ public:
     Q_ENUM(Type)
 
     explicit UIViewModel(UIViewModel *parent = 0);
+    virtual ~UIViewModel();
 
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(bool isVisible READ isVisible NOTIFY isVisibleChanged)
