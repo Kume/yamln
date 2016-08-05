@@ -22,7 +22,6 @@ SOURCES += libyaml.cpp \
     action/modifyyamlaction.cpp
 
 HEADERS += libyaml.h\
-        libyaml_global.h \
     yamlobject.h \
     libyamlexception.h \
     yamlpath.h \

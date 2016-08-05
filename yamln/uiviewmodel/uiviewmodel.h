@@ -54,6 +54,12 @@ protected:
     void setBasicValues(const YamlObjectPtr &spec);
 
     // utilities
+    void mapProperty(const YamlObjectPtr &source,
+                     const char *propertyName,
+                     YamlObject::Type type,
+                     bool required,
+                     const YamlObjectPtr &defaultValue);
+
     static void validateYamlObjectType(const QString& objectName,
                                        const YamlObjectPtr& object,
                                        YamlObject::Type expectedType);

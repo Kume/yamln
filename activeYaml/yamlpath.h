@@ -5,9 +5,18 @@
 
 namespace ActiveYaml
 {
+
 class YamlPathElement
 {
-
+public:
+    enum class Type{
+        ArrayIndex,
+        ObjectProperty,
+        ArrayOrObject,
+        Reverse,
+        Pattern,
+        All,
+    };
 };
 
 class YamlPath

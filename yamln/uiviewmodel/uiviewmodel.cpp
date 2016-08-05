@@ -1,10 +1,11 @@
 #include "uiviewmodel.h"
 
+#include "assert.h"
+
 #include "textuiviewmodel.h"
 #include "formuiviewmodel.h"
 #include "tableuiviewmodel.h"
 #include "checkboxuiviewmodel.h"
-
 #include "exceptions/yamlobjectexception.h"
 
 UIViewModel::UIViewModel(UIViewModel *parent) : QObject(parent)
@@ -141,6 +142,22 @@ void UIViewModel::setBasicValues(const YamlObjectPtr &spec)
     case YamlObject::TypeArray:
         // TODO
         break;
+    }
+}
+
+void UIViewModel::mapProperty(const YamlObjectPtr &source, const char *propertyName, YamlObject::Type type, bool required, const YamlObjectPtr &defaultValue)
+{
+    assert(type != YamlObject::TypeArray);
+    assert(type != YamlObject::TypeObject);
+
+    if (required) {
+        validateYamlObjectPropertyExistence("ui definition", source, propertyName);
+    }
+
+    if (!source->isObject() || source->contains(propertyName)) {
+        setProperty(propertyName, defaultValue->toQVariant());
+    } else {
+        setProperty(propertyName, source->value(propertyName)->toQVariant());
     }
 }
 

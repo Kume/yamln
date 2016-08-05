@@ -12,6 +12,8 @@ CONFIG += staticlib
 
 include(libyaml.pri)
 
+DEFINES += LIBYAML_LIBRARY
+
 SOURCES += \
     yamlobject.cpp \
     activeyamlexception.cpp \

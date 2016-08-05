@@ -78,6 +78,12 @@ public:
     uint getHash(uint seed = 0) const;
     bool operator ==(const YamlObject &another) const;
 
+    bool isNull() const;
+    bool isObject() const;
+    bool isArray() const;
+    bool isString() const;
+    bool isInteger() const;
+
     virtual QString toString() const;
 
 private:

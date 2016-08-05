@@ -355,6 +355,31 @@ bool YamlObject::operator ==(const YamlObject &another) const
     }
 }
 
+bool YamlObject::isNull() const
+{
+    return m_type == TypeNull;
+}
+
+bool YamlObject::isObject() const
+{
+    return m_type == TypeObject;
+}
+
+bool YamlObject::isArray() const
+{
+    return m_type == TypeArray;
+}
+
+bool YamlObject::isString() const
+{
+    return m_type == TypeString;
+}
+
+bool YamlObject::isInteger() const
+{
+    return m_type == TypeInteger;
+}
+
 QString YamlObject::toString() const
 {
     switch (this->type()) {
