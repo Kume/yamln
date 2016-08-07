@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     // auto parsed = YamlObject::fromFile(QString("C:\\Users\\makoto\\c\\qt_test\\test.yaml"));
-    auto parsed = YamlObject::fromFile(QFile(":/samples/sample1.yaml"));
+    QFile sampleFile(":/samples/sample1.yaml");
+    auto parsed = YamlObject::fromFile(sampleFile);
 
     parsed->dump();
     QFile f("C:\\Users\\makoto\\c\\qt_test\\test_output.yaml");

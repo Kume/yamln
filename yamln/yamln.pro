@@ -50,3 +50,4 @@ HEADERS += \
     exceptions/uidefinitionexception.h \
     uiviewmodel/checkboxuiviewmodel.h \
     uiviewmodel/tablecelluiviewmodel.h
+

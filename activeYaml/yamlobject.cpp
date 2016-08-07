@@ -416,7 +416,7 @@ YamlObjectPtr YamlObject::fromFile(const QString &fileName)
     FILE *file = fopen(stdFileName.c_str(), "r");
 
     if (!file) {
-        throw new std::exception((std::string() + "cannot open file " + stdFileName).c_str());
+        throw ActiveYamlException(QString("cannot open file ") + fileName);
     }
 
     yaml_parser_t parser;
@@ -449,7 +449,7 @@ YamlObjectPtr YamlObject::fromFile(QFile &file)
     if (needsOpen) {
         if (!file.open(QFile::ReadOnly)) {
             qDebug() << file.errorString();
-            throw std::exception((std::string() + "cannot open file " + file.fileName().toStdString()).c_str());
+            throw ActiveYamlException(QString("cannot open file %0").arg(file.fileName()));
         }
     }
 
@@ -710,7 +710,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
 
     while (!is_done) {
         if (!yaml_parser_parse(parser, &event)) {
-            throw new std::exception("parse error");
+            throw ActiveYamlException("parse error");
         }
 
         switch (event.type) {
