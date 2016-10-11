@@ -6,7 +6,7 @@ ActiveYaml::YamlManager::YamlManager(const ActiveYaml::YamlObjectPtr &root)
 
 }
 
-void ActiveYaml::YamlManager::addObserver(const ActiveYaml::YamlPath &path, ActiveYaml::YamlObserver *observer)
+void ActiveYaml::YamlManager::addObserver(YamlObserver *observer)
 {
 
 }

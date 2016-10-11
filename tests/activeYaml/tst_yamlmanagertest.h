@@ -4,12 +4,15 @@
 
 #include <QObject>
 
-class YamlManagerTest
+class YamlManagerTest : public QObject
 {
     Q_OBJECT
 
 public:
     YamlManagerTest();
+    
+private Q_SLOTS:
+    void testNotify();
 };
 
 #endif // TST_YAMLMANAGERTEST_H

@@ -27,6 +27,7 @@ public:
     void execAction(const YamlActionPtr& action);
     void undo();
     bool canUndo() const;
+    YamlObjectPtr rootObject() const { return m_rootObject; }
 
 private:
     YamlObjectPtr m_rootObject;

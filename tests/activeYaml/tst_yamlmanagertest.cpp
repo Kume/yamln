@@ -1,6 +1,12 @@
 #include "tst_yamlmanagertest.h"
 
-tst_yamlmanagertest::tst_yamlmanagertest()
+YamlManagerTest::YamlManagerTest() :
+    QObject(nullptr)
 {
+    
+}
 
+void YamlManagerTest::testNotify()
+{
+    
 }

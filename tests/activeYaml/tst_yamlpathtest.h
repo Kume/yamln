@@ -17,7 +17,10 @@ public:
 private Q_SLOTS:
     void testParseEmpty();
     void testParseSingleProperty();
+    void testParseMultiProperty();
     void testParseRoot();
+    void testAbsoluteSinglePath();
+    void testAbsoluteMultiPath();
     void testParseAll();
 };
 

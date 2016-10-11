@@ -20,7 +20,10 @@ SOURCES += \
     yamlpath.cpp \
     action/yamlaction.cpp \
     action/modifyyamlaction.cpp \
-    yamlmanager.cpp
+    yamlmanager.cpp \
+    yamlpathtree.cpp \
+    yamlobjectparser.cpp \
+    yamlemitter.cpp
 
 HEADERS += activeyaml.h \
     yamlobject.h \
@@ -28,7 +31,10 @@ HEADERS += activeyaml.h \
     yamlpath.h \
     action/yamlaction.h \
     action/modifyyamlaction.h \
-    yamlmanager.h
+    yamlmanager.h \
+    yamlpathtree.h \
+    yamlobjectparser.h \
+    yamlemitter.h
 
 unix {
     target.path = /usr/lib

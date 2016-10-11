@@ -55,10 +55,13 @@ public:
     YamlPathElement first() const { return m_elements.front(); }
     bool isEmpty() const;
     int size() const { return m_elements.size(); }
+    bool isAbsolute() const { return m_isAbsolute; }
     
 private:
     YamlPathElementList m_elements;
+    bool m_isAbsolute;
 };
+
 }
 
 #endif // YAMLPATH_H

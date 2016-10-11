@@ -12,11 +12,11 @@ class YamlActionTest : public QObject
     Q_OBJECT
 
 public:
-    YamlActionTest();
+    YamlActionTest() {}
 
 
 private Q_SLOTS:
-    void testInteger();
+    void testModifyInteger();
 };
 
 #endif // YAMLACTIONTEST_H
