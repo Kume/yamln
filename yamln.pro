@@ -8,3 +8,4 @@ SUBDIRS += \
     activeYaml
 
 yamln.deponds = activeYaml
+tests.depends = activeYaml

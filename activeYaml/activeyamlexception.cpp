@@ -28,3 +28,15 @@ ActiveYamlEmitterException::ActiveYamlEmitterException(const QString &message)
 }
 
 
+
+InvalidOperationException::InvalidOperationException(const QString &message)
+    : ActiveYamlException(message)
+{
+
+}
+
+OutOfRangeException::OutOfRangeException(const QString &message)
+    : ActiveYamlException(message)
+{
+
+}

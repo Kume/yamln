@@ -19,14 +19,22 @@ SOURCES += \
     activeyamlexception.cpp \
     yamlpath.cpp \
     action/yamlaction.cpp \
-    action/modifyyamlaction.cpp
+    action/modifyyamlaction.cpp \
+    yamlmanager.cpp \
+    yamlpathtree.cpp \
+    yamlobjectparser.cpp \
+    yamlemitter.cpp
 
 HEADERS += activeyaml.h \
     yamlobject.h \
     activeyamlexception.h \
     yamlpath.h \
     action/yamlaction.h \
-    action/modifyyamlaction.h
+    action/modifyyamlaction.h \
+    yamlmanager.h \
+    yamlpathtree.h \
+    yamlobjectparser.h \
+    yamlemitter.h
 
 unix {
     target.path = /usr/lib

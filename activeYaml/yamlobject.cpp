@@ -7,6 +7,7 @@
 #include <QStringBuilder>
 
 #include "activeyamlexception.h"
+#include "yamlpath.h"
 
 using namespace ActiveYaml;
 
@@ -17,61 +18,71 @@ YamlObject::YamlObject()
 
 }
 
+YamlObjectPtr YamlObject::create()
+{
+    struct impl : YamlObject {
+        impl() : YamlObject() {}
+    };
+
+    auto ptr = std::make_shared<impl>();
+    return std::move(ptr);
+}
+
 YamlObject::~YamlObject()
 {
 
 }
 
-YamlObject* YamlObject::integer(int n)
+YamlObjectPtr YamlObject::integer(int n)
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeInteger;
     object->m_basicValue.intValue = n;
     return object;
 }
 
-YamlObject* YamlObject::boolean(bool value)
+YamlObjectPtr YamlObject::boolean(bool value)
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeBoolean;
     object->m_basicValue.boolValue = value;
     return object;
 }
 
-YamlObject* YamlObject::string(const QString &text)
+YamlObjectPtr YamlObject::string(const QString &text)
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeString;
     object->m_stringValue = text;
     return object;
 }
 
-YamlObject* YamlObject::array()
+YamlObjectPtr YamlObject::array()
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeArray;
     object->m_variableValue = std::unique_ptr<VariableValue>(new VariableValue());
     return object;
 }
 
-YamlObject* YamlObject::object()
+YamlObjectPtr YamlObject::object()
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeObject;
     object->m_variableValue = std::unique_ptr<VariableValue>(new VariableValue());
     return object;
 }
 
-YamlObject* YamlObject::null()
+YamlObjectPtr YamlObject::null()
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeNull;
     return object;
 }
 
-YamlObject *YamlObject::float_(double value)
+YamlObjectPtr YamlObject::float_(double value)
 {
-    auto object = new YamlObject();
+    auto object = create();
     object->m_type = TypeFloat;
     object->m_basicValue.floatValue = value;
     return object;
@@ -144,9 +155,15 @@ YamlObjectPtr YamlObject::insert(const YamlObjectPtr &key, const YamlObjectPtr &
     if (m_type != TypeObject) {
         throw ActiveYamlTypeException("");
     }
+
     if (!m_variableValue->map.contains(key)) {
         m_variableValue->list.append(key);
+        key->m_parent = shared_from_this();
+    } else {
+        m_variableValue->map[key]->m_parent.reset();
     }
+
+    value->m_parent = shared_from_this();
     return m_variableValue->map[key] = value;
 }
 
@@ -160,6 +177,7 @@ YamlObjectPtr YamlObject::removeAt(const YamlObjectPtr &key)
     if (m_type != TypeObject) {
         throw ActiveYamlTypeException("");
     }
+
     if (!m_variableValue->map.contains(key)) {
         YamlObjectPtr ret = m_variableValue->map[key];
         m_variableValue->map.remove(key);
@@ -196,6 +214,7 @@ YamlObjectPtr YamlObject::insert(int index, const YamlObjectPtr &value)
         throw ActiveYamlException("");
     }
     m_variableValue->list.insert(index, value);
+    value->m_parent = shared_from_this();
     return value;
 }
 
@@ -355,6 +374,24 @@ bool YamlObject::operator ==(const YamlObject &another) const
     }
 }
 
+YamlObjectPtr YamlObject::findByPath(const YamlPath &path) const
+{
+    switch(m_type) {
+    case TypeObject:
+
+
+    case TypeArray:
+
+    default:
+        if(path.isEmpty()) {
+            // return sharedFromThis();
+        }
+    }
+
+    // TODO 後で消す
+    return YamlObjectPtr();
+}
+
 bool YamlObject::isNull() const
 {
     return m_type == TypeNull;
@@ -458,11 +495,12 @@ YamlObjectPtr YamlObject::fromFile(QFile &file)
     yaml_parser_set_input(&parser, &yaml_read_handler, &file);
 
     try{
-        return parse(&parser);
+        YamlObjectPtr ret = parse(&parser);
         yaml_parser_delete(&parser);
         if (needsOpen) {
             file.close();
         }
+        return ret;
     } catch (std::exception &e) {
         yaml_parser_delete(&parser);
         if (needsOpen) {
@@ -771,7 +809,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
                     break;
 
                 case YamlObject::TypeObject:
-                    if (mapKeys.last().isNull()) {
+                    if (!mapKeys.last()) {
                         mapKeys.last() = yamlValue;
                     } else {
                         YamlObjectPtr key = mapKeys.last();
@@ -791,7 +829,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
             if (isDebugOutputEnabled) qDebug() << "YAML_SEQUENCE_START_EVENT";
 
             auto yamlValue = YamlObjectPtr(YamlObject::array());
-            if (rootObject.isNull()) {
+            if (!rootObject) {
                 rootObject = yamlValue;
             }
             if (!objectStack.empty()) {
@@ -801,7 +839,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
                     break;
 
                 case YamlObject::TypeObject:
-                    if (mapKeys.last().isNull()) {
+                    if (!mapKeys.last()) {
                         // keyに配列は指定できない想定
                         throw ActiveYamlTypeException("");
                     } else {
@@ -828,7 +866,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
             if (isDebugOutputEnabled) qDebug() << "YAML_MAPPING_START_EVENT";
 
             auto yamlValue = YamlObjectPtr(YamlObject::object());
-            if (rootObject.isNull()) {
+            if (!rootObject) {
                 rootObject = yamlValue;
             }
             if (!objectStack.empty()) {
@@ -838,7 +876,7 @@ YamlObjectPtr YamlObject::parse(void *parser_)
                     break;
 
                 case YamlObject::TypeObject:
-                    if (mapKeys.last().isNull()) {
+                    if (!mapKeys.last()) {
                         // keyにobjectは指定できない想定
                         throw ActiveYamlTypeException("");
                     } else {

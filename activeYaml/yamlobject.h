@@ -2,18 +2,19 @@
 #define YAMLOBJECT_H
 
 #include <QVariant>
-#include <QSharedPointer>
 #include <QFile>
 #include <memory>
 #include <functional>
+#include <memory>
 
 namespace ActiveYaml
 {
 
 class YamlObject;
-typedef QSharedPointer<YamlObject> YamlObjectPtr;
+class YamlPath;
+typedef std::shared_ptr<YamlObject> YamlObjectPtr;
 
-class YamlObject
+class YamlObject : std::enable_shared_from_this<YamlObject>
 {
 public:
     enum Type{
@@ -29,13 +30,13 @@ public:
 
     ~YamlObject();
 
-    static YamlObject* integer(int n);
-    static YamlObject* boolean(bool value);
-    static YamlObject* string(const QString &text);
-    static YamlObject* object();
-    static YamlObject* array();
-    static YamlObject* null();
-    static YamlObject* float_(double value);
+    static YamlObjectPtr integer(int n);
+    static YamlObjectPtr boolean(bool value);
+    static YamlObjectPtr string(const QString &text);
+    static YamlObjectPtr object();
+    static YamlObjectPtr array();
+    static YamlObjectPtr null();
+    static YamlObjectPtr float_(double value);
     static QString typeToName(Type type);
     static YamlObjectPtr fromFile(const QString &fileName);
     static YamlObjectPtr fromFile(QFile &file);
@@ -77,6 +78,7 @@ public:
     Type type() const;
     uint getHash(uint seed = 0) const;
     bool operator ==(const YamlObject &another) const;
+    YamlObjectPtr findByPath(const YamlPath &path) const;
 
     bool isNull() const;
     bool isObject() const;
@@ -88,6 +90,7 @@ public:
 
 private:
     explicit YamlObject();
+    static YamlObjectPtr create();
     static YamlObjectPtr parse(void* parser);
     void emitYaml(void* emitter) const;
 
@@ -110,6 +113,8 @@ private:
         QHash<YamlObjectPtr, YamlObjectPtr> map;
     };
     std::unique_ptr<VariableValue> m_variableValue;
+
+    YamlObjectPtr m_parent;
 };
 }
 

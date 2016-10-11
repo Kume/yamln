@@ -18,7 +18,9 @@ TEMPLATE = app
 SOURCES += \
     tst_yamlobjecttest.cpp \
     tst_main.cpp \
-    tst_yamlactiontest.cpp
+    tst_yamlactiontest.cpp \
+    tst_yamlpathtest.cpp \
+    tst_yamlmanagertest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../activeYaml/release/ -lactiveYaml
@@ -36,4 +38,6 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../../activeYaml/libactiveYaml.a
 
 HEADERS += \
     tst_yamlobjecttest.h \
-    tst_yamlactiontest.h
+    tst_yamlactiontest.h \
+    tst_yamlpathtest.h \
+    tst_yamlmanagertest.h

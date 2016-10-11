@@ -28,6 +28,18 @@ public:
     ActiveYamlEmitterException(const QString &message);
 };
 
+class InvalidOperationException : ActiveYamlException
+{
+public:
+    InvalidOperationException(const QString &message);
+};
+
+class OutOfRangeException : ActiveYamlException
+{
+public:
+    OutOfRangeException(const QString &message);
+};
+
 }
 
 #endif // ACTIVEYAMLEXCEPTION_H
