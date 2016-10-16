@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "activeyaml.h"
+#include "yamlobjectparser.h"
 #include <QList>
 #include <QFile>
 #include <QDir>
@@ -27,18 +28,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-    // auto parsed = YamlObject::fromFile(QString("C:\\Users\\makoto\\c\\qt_test\\test.yaml"));
-    auto parsed = YamlObject::fromFile(QFile(":/samples/sample1.yaml"));
+    YamlObjectParser::isDebugOutputEnabled = true;
+    auto parsed = YamlObjectParser::fromFile(QFile(":/samples/sample1.yaml"));
 
-    parsed->dump();
-    QFile f("C:\\Users\\makoto\\c\\qt_test\\test_output.yaml");
-    f.open(QFile::WriteOnly);
-    QTextStream s(&f);
-    s << parsed->dump() << endl;
-    f.close();
-    // qDebug() << parsed->toQVariant();
-
-    // new UIViewModelList();
     auto uiViewModel = new RootUIViewModel(0, parsed);
     engine.rootContext()->setContextProperty("test", uiViewModel);
 

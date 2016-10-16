@@ -5,13 +5,10 @@
 
 using namespace ActiveYaml;
 
-void YamlActionTest::testInteger()
-{
-
-}
-
 void YamlActionTest::testModifyInteger()
 {
-    auto manager = new YamlMa
-    auto action = new ModifyYamlAction(YamlPath::parse("test"), YamlObject::integer(2));
+//    auto manager = new YamlManager(YamlObject::"{\"test\":1}"));
+//    auto action = new ModifyYamlAction(YamlPath::parse("test"), YamlObject::integer(2));
+//    manager->execAction(action);
+//    QCOMPARE(manager->rootObject()->value("test")->integerValue(), 1);
 }
