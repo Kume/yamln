@@ -38,10 +38,6 @@ public:
     static YamlObjectPtr null();
     static YamlObjectPtr float_(double value);
     static QString typeToName(Type type);
-    static YamlObjectPtr fromFile(const QString &fileName);
-    static YamlObjectPtr fromFile(QFile &file);
-
-    static bool isDebugOutputEnabled;
 
     QString dump() const;
     QVariant toQVariant() const;
@@ -91,11 +87,8 @@ public:
 private:
     explicit YamlObject();
     static YamlObjectPtr create();
-    static YamlObjectPtr parse(void* parser);
     void emitYaml(void* emitter) const;
 
-    static bool isIntegerString(const QString &string);
-    static bool isFloatString(const QString &string);
 
 private:
     Type m_type;
