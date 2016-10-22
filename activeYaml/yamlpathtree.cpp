@@ -7,7 +7,8 @@ YamlPathTree::YamlPathTree()
 
 }
 
-YamlPathTreeNode::YamlPathTreeNode(const ActiveYaml::YamlPathElement &element)
+YamlPathTreeNode::YamlPathTreeNode(const YamlPathElement &element) :
+    m_pathElement(element)
 {
 
 }
