@@ -24,7 +24,8 @@ SOURCES += \
     yamlpathtree.cpp \
     yamlobjectparser.cpp \
     yamlobjectemitter.cpp \
-    activeyamlutil.cpp
+    activeyamlutil.cpp \
+    yamlbuider.cpp
 
 HEADERS += activeyaml.h \
     yamlobject.h \
@@ -36,7 +37,8 @@ HEADERS += activeyaml.h \
     yamlpathtree.h \
     yamlobjectparser.h \
     yamlobjectemitter.h \
-    activeyamlutil.h
+    activeyamlutil.h \
+    yamlbuider.h
 
 unix {
     target.path = /usr/lib
