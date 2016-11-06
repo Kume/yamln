@@ -7,6 +7,11 @@ Rectangle {
     readonly property UIViewModel contentViewModel: viewModel.content
 
     height: basicStyle.rowHeight
+    width: labelItem.width + contentLoader.width
+
+    onWidthChanged: {
+        console.log("Width = " + width);
+    }
 
     Item {
         id: labelItem
@@ -28,7 +33,6 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: labelItem.right
-        anchors.right: parent.right
         anchors.margins: 2
         source: typeQmlPathMap[contentViewModel.type]
     }

@@ -11,6 +11,7 @@
 #include <QQmlContext>
 #include <QQmlApplicationEngine>
 #include <QtQml>
+#include <QtWebEngine/QtWebEngine>
 #include "uiviewmodel/uiviewmodellist.h"
 #include "uiviewmodel/formuiviewmodel.h"
 #include "uiviewmodel/formelementuiviewmodel.h"
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
+
+    QtWebEngine::initialize();
 
     qmlRegisterType<UIViewModelList>("yamln", 0, 1, "UIViewModelList");
     qmlRegisterType<UIViewModel>("yamln", 0, 1, "UIViewModel");

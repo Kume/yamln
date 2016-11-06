@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.0
+import QtQuick.Controls 1.4
+import QtWebEngine 1.0
 
 Window {
     visible: true
@@ -13,12 +15,21 @@ Window {
     width: 600
     height: 400
 
-    Form {
+
+    SplitView {
         anchors.fill: parent
-        viewModel: test.content
-        onViewModelChanged: {
-            console.log(test)
-            // mapToItem()
+        ScrollView {
+            height: parent.height
+
+            Form {
+                height: parent.height
+                viewModel: test.content
+            }
+        }
+
+
+        WebEngineView {
+
         }
     }
 

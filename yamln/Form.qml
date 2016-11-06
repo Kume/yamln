@@ -3,6 +3,7 @@ import yamln 0.1
 
 Item {
     property UIViewModel viewModel: null
+    height: column.height
 
     onViewModelChanged: {
         console.log('onViewModelChanged')
@@ -11,13 +12,11 @@ Item {
 
     Column {
         id: column
-        anchors.fill: parent
 
         Repeater {
             model: viewModel.elements
             delegate: FormElement {
                 viewModel: model.display
-                width: column.width
             }
         }
     }
