@@ -17,6 +17,8 @@ public:
 private Q_SLOTS:
     void testInteger();
     void testString();
+
+    void testIteratorForArray();
 };
 
 #endif // YAMLOBJECTTEST_H
