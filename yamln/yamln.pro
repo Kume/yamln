@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     uiviewmodel/tableheaderuiviewmodel.cpp \
     exceptions/uidefinitionexception.cpp \
     uiviewmodel/checkboxuiviewmodel.cpp \
-    uiviewmodel/tablecelluiviewmodel.cpp
+    uiviewmodel/tablecelluiviewmodel.cpp \
+    uiviewmodel/selectuiviewmodel.cpp
 
 RESOURCES += qml.qrc \
     samples.qrc
@@ -49,5 +50,6 @@ HEADERS += \
     uiviewmodel/tableheaderuiviewmodel.h \
     exceptions/uidefinitionexception.h \
     uiviewmodel/checkboxuiviewmodel.h \
-    uiviewmodel/tablecelluiviewmodel.h
+    uiviewmodel/tablecelluiviewmodel.h \
+    uiviewmodel/selectuiviewmodel.h
 
