@@ -2,12 +2,11 @@
 
 #include <exception>
 #include <QDebug>
-#include <yaml.h>
 #include <QVector>
 #include <QStringBuilder>
 
-#include "activeyamlexception.h"
 #include "yamlpath.h"
+#include "activeyamlexception.h"
 
 using namespace ActiveYaml;
 
@@ -24,6 +23,13 @@ YamlObjectPtr YamlObject::create()
 
     auto ptr = std::make_shared<impl>();
     return std::move(ptr);
+}
+
+void YamlObject::assertTypeImpl(Type type) const
+{
+    if (m_type != type) {
+        throw ActiveYamlTypeException("");
+    }
 }
 
 YamlObject::~YamlObject()
@@ -116,14 +122,6 @@ QString YamlObject::typeToName(Type type)
     throw ActiveYamlTypeException("");
 }
 
-QString YamlObject::stringValue() const
-{
-    if (m_type != TypeString) {
-        throw ActiveYamlTypeException("");
-    }
-    return m_stringValue;
-}
-
 YamlObjectPtr YamlObject::operator [](const YamlObjectPtr &key) const
 {
     return value(key);
@@ -136,9 +134,7 @@ YamlObjectPtr YamlObject::operator [](const QString &key) const
 
 YamlObjectPtr YamlObject::value(const YamlObjectPtr &key) const
 {
-    if (m_type != TypeObject) {
-        throw ActiveYamlTypeException("");
-    }
+    assertType(TypeObject);
     const QHash<YamlObjectPtr, YamlObjectPtr> &map = m_variableValue->map;
     return map.value(key);
 }
@@ -150,9 +146,7 @@ YamlObjectPtr YamlObject::value(const QString &key) const
 
 YamlObjectPtr YamlObject::insert(const YamlObjectPtr &key, const YamlObjectPtr &value)
 {
-    if (m_type != TypeObject) {
-        throw ActiveYamlTypeException("");
-    }
+    assertType(TypeObject);
 
     if (!m_variableValue->map.contains(key)) {
         m_variableValue->list.append(key);
@@ -193,9 +187,7 @@ YamlObjectPtr YamlObject::removeAt(const QString &key)
 
 bool YamlObject::contains(const YamlObjectPtr &key) const
 {
-    if (m_type != TypeObject) {
-        throw ActiveYamlTypeException("");
-    }
+    assertType(TypeObject);
     const QHash<YamlObjectPtr, YamlObjectPtr> &map = m_variableValue->map;
     return map.contains(key);
 }
@@ -208,9 +200,7 @@ bool YamlObject::contains(const QString &key) const
 // for array
 YamlObjectPtr YamlObject::insert(int index, const YamlObjectPtr &value)
 {
-    if (m_type != TypeArray) {
-        throw ActiveYamlException("");
-    }
+    assertType(TypeArray);
     m_variableValue->list.insert(index, value);
     value->m_parent = shared_from_this();
     return value;
@@ -218,9 +208,7 @@ YamlObjectPtr YamlObject::insert(int index, const YamlObjectPtr &value)
 
 void YamlObject::append(YamlObjectPtr &object)
 {
-    if (m_type != TypeArray) {
-        throw ActiveYamlException("");
-    }
+    assertType(TypeArray);
     m_variableValue->list.append(object);
 }
 
@@ -251,6 +239,16 @@ YamlObjectPtr YamlObject::remove(const YamlObjectPtr &value)
     default:
         throw ActiveYamlTypeException("");
     }
+}
+
+YamlObject::Iterator YamlObject::begin() const
+{
+    return Iterator(shared_from_this(), m_variableValue->list.constBegin());
+}
+
+YamlObject::Iterator YamlObject::end() const
+{
+    return Iterator(shared_from_this(), m_variableValue->list.constEnd());
 }
 
 // for general
@@ -441,220 +439,5 @@ QString YamlObject::toString() const
 
     case TypeNull:
         return "null";
-    }
-}
-
-void exec_event(yaml_emitter_t &emitter, yaml_event_t &event)
-{
-    if (!yaml_emitter_emit(&emitter, &event)) {
-        throw ActiveYamlEmitterException("");
-    }
-}
-
-void stream_start_event(yaml_emitter_t &emitter)
-{
-    yaml_event_t event;
-    if (!yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING)) {
-        throw ActiveYamlEmitterException("");
-    }
-    exec_event(emitter, event);
-}
-
-void document_start_event(yaml_emitter_t &emitter)
-{
-    yaml_event_t event;
-    if (!yaml_document_start_event_initialize(&event, 0, 0, 0, 0)) {
-        throw ActiveYamlEmitterException("");
-    }
-    exec_event(emitter, event);
-}
-
-void document_end_event(yaml_emitter_t &emitter)
-{
-    yaml_event_t event;
-    if (!yaml_document_end_event_initialize(&event, 0)) {
-        throw ActiveYamlEmitterException("");
-    }
-    exec_event(emitter, event);
-}
-
-void stream_end_event(yaml_emitter_t &emitter)
-{
-    yaml_event_t event;
-    if (!yaml_stream_end_event_initialize(&event)) {
-        throw ActiveYamlEmitterException("");
-    }
-    exec_event(emitter, event);
-}
-
-int write_handler(void *ext, unsigned char *buffer, size_t size) {
-    QString *output = (QString *)ext;
-    output->append(QString::fromUtf8((char*)buffer, (int)size));
-    bool error = false;
-    return error ? 0 : 1;
-}
-
-QString YamlObject::dump() const
-{
-    yaml_emitter_t emitter;
-    yaml_emitter_initialize(&emitter);
-    QString outputString;
-    yaml_emitter_set_output(&emitter, write_handler, (void *)&outputString);
-
-    try {
-        stream_start_event(emitter);
-        document_start_event(emitter);
-
-        this->emitYaml(&emitter);
-
-        document_end_event(emitter);
-        stream_end_event(emitter);
-        yaml_emitter_delete(&emitter);
-    }
-    catch (ActiveYamlEmitterException &ex)
-    {
-        yaml_emitter_delete(&emitter);
-        throw;
-    }
-    return outputString;
-}
-
-QVariant YamlObject::toQVariant() const
-{
-    switch (this->type()) {
-    case TypeNone:
-        throw ActiveYamlTypeException("");
-
-    case TypeObject:
-    {
-        QVariantMap map;
-        for (auto i = m_variableValue->map.constBegin(); i != m_variableValue->map.constEnd(); i++) {
-            map.insert(i.key()->toString(), i.value()->toQVariant());
-        }
-        return map;
-    }
-
-    case TypeArray:
-    {
-        QVariantList list;
-        for (auto i : m_variableValue->list) {
-            list.append(i->toQVariant());
-        }
-        return QVariant(list);
-    }
-
-    case TypeInteger:
-        return QVariant(m_basicValue.intValue);
-
-    case TypeFloat:
-        return QVariant(m_basicValue.floatValue);
-
-    case TypeString:
-        return QVariant(m_stringValue);
-
-    case TypeBoolean:
-        return QVariant(m_basicValue.boolValue);
-
-    case TypeNull:
-        return QVariant();
-    }
-}
-
-int YamlObject::integerValue() const
-{
-    if (m_type != TypeInteger) {
-        throw ActiveYamlTypeException("");
-    }
-    return m_basicValue.intValue;
-}
-
-void YamlObject::emitYaml(void *emitter) const
-{
-    yaml_emitter_t *_emitter = (yaml_emitter_t *)emitter;
-    yaml_event_t event;
-    yaml_char_t *tag = (yaml_char_t *)"";
-
-    switch (this->type()) {
-    case TypeNone:
-        break;
-
-    case TypeObject:
-    {
-        yaml_mapping_start_event_initialize(&event, 0, 0, 1, YAML_BLOCK_MAPPING_STYLE);
-        exec_event(*_emitter, event);
-
-        for (YamlObjectPtr i : this->m_variableValue->list) {
-            i->emitYaml(emitter);
-            this->m_variableValue->map[i]->emitYaml(emitter);
-        }
-
-        yaml_mapping_end_event_initialize(&event);
-        exec_event(*_emitter, event);
-    }
-        break;
-
-    case TypeArray:
-        yaml_sequence_start_event_initialize(&event, 0, 0, 1, YAML_BLOCK_SEQUENCE_STYLE);
-        exec_event(*_emitter, event);
-
-        for (YamlObjectPtr i : this->m_variableValue->list) {
-            i->emitYaml(emitter);
-        }
-
-        yaml_sequence_end_event_initialize(&event);
-        exec_event(*_emitter, event);
-
-        break;
-
-    case TypeInteger:
-    {
-        std::string value = std::to_string(this->m_basicValue.intValue);
-        yaml_scalar_event_initialize(&event, 0, 0,
-                                     (yaml_char_t *)value.c_str(), value.length(), 1, 0,
-                                     YAML_PLAIN_SCALAR_STYLE);
-        exec_event(*_emitter, event);
-    }
-        break;
-
-    case TypeFloat:
-    {
-        std::string value = std::to_string(this->m_basicValue.floatValue);
-        yaml_scalar_event_initialize(&event, 0, 0,
-                                     (yaml_char_t *)value.c_str(), value.length(), 1, 0,
-                                     YAML_PLAIN_SCALAR_STYLE);
-    }
-        break;
-
-    case TypeString:
-    {
-        auto bytes = this->m_stringValue.toUtf8();
-        yaml_scalar_event_initialize(&event, 0, 0,
-                                     (yaml_char_t *)bytes.data(), bytes.size(), 1, 1,
-                                     YAML_DOUBLE_QUOTED_SCALAR_STYLE);
-        exec_event(*_emitter, event);
-    }
-        break;
-
-    case TypeBoolean:
-    {
-        if (this->m_basicValue.boolValue) {
-            yaml_scalar_event_initialize(&event, 0, 0,
-                                         (yaml_char_t *)"true", 5, 1, 0,
-                                         YAML_PLAIN_SCALAR_STYLE);
-        } else {
-            yaml_scalar_event_initialize(&event, 0, 0,
-                                         (yaml_char_t *)"false", 6, 1, 0,
-                                         YAML_PLAIN_SCALAR_STYLE);
-        }
-        exec_event(*_emitter, event);
-    }
-        break;
-
-    case TypeNull:
-        yaml_scalar_event_initialize(&event, 0, 0,
-                                     (yaml_char_t *)"null", 5, 1, 0,
-                                     YAML_PLAIN_SCALAR_STYLE);
-        exec_event(*_emitter, event);
-        break;
     }
 }

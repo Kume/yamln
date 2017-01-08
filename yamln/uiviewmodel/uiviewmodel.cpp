@@ -1,6 +1,8 @@
 #include "uiviewmodel.h"
 
-#include "assert.h"
+#include <assert.h>
+
+#include <yamlobjectemitter.h>
 
 #include "textuiviewmodel.h"
 #include "formuiviewmodel.h"
@@ -155,9 +157,9 @@ void UIViewModel::mapProperty(const YamlObjectPtr &source, const char *propertyN
     }
 
     if (!source->isObject() || source->contains(propertyName)) {
-        setProperty(propertyName, defaultValue->toQVariant());
+        setProperty(propertyName, YamlObjectEmitter::toQVariant(defaultValue));
     } else {
-        setProperty(propertyName, source->value(propertyName)->toQVariant());
+        setProperty(propertyName, YamlObjectEmitter::toQVariant(source->value(propertyName)));
     }
 }
 

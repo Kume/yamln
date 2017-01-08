@@ -1,11 +1,12 @@
 #ifndef YAMLOBJECT_H
 #define YAMLOBJECT_H
 
-#include <QVariant>
-#include <QFile>
 #include <memory>
 #include <functional>
 #include <memory>
+#include <QVariant>
+#include <QFile>
+#include <QList>
 
 namespace ActiveYaml
 {
@@ -13,10 +14,14 @@ namespace ActiveYaml
 class YamlObject;
 class YamlPath;
 typedef std::shared_ptr<YamlObject> YamlObjectPtr;
+typedef std::shared_ptr<const YamlObject> YamlObjectConstPtr;
 
 class YamlObject : std::enable_shared_from_this<YamlObject>
 {
 public:
+    class Iterator;
+    class ConstIterator;
+
     enum Type{
         TypeNone = 0,
         TypeObject,
@@ -39,11 +44,14 @@ public:
     static YamlObjectPtr float_(double value);
     static QString typeToName(Type type);
 
-    QString dump() const;
-    QVariant toQVariant() const;
-
     // for integer
     int integerValue() const;
+
+    // for float
+    double floatValue() const;
+
+    // for boolean
+    bool booleanValue() const;
 
     // for string
     QString stringValue() const;
@@ -69,6 +77,8 @@ public:
 
     // for collection
     YamlObjectPtr remove(const YamlObjectPtr& value);
+    Iterator begin() const;
+    Iterator end() const;
 
     // for general
     Type type() const;
@@ -87,8 +97,9 @@ public:
 private:
     explicit YamlObject();
     static YamlObjectPtr create();
-    void emitYaml(void* emitter) const;
 
+    void assertType(Type type) const;
+    void assertTypeImpl(Type type) const;
 
 private:
     Type m_type;
@@ -108,7 +119,92 @@ private:
     std::unique_ptr<VariableValue> m_variableValue;
 
     YamlObjectPtr m_parent;
+
+public:
+    class Iterator {
+    public:
+        Iterator(const YamlObjectConstPtr& object, QList<YamlObjectPtr>::const_iterator iterator) :
+            m_object(object),
+            m_iterator(iterator)
+        {
+            m_iterator = m_object->m_variableValue->list.begin();
+        }
+
+        YamlObjectPtr operator *() const {
+            return value();
+        }
+
+        Iterator operator ++() {
+            m_iterator++;
+            return *this;
+        }
+
+        Iterator operator ++(int) {
+            auto oldValue = *this;
+            ++m_iterator;
+            return oldValue;
+        }
+
+        bool operator !=(const Iterator& itr) const {
+            return itr.m_iterator != m_iterator;
+        }
+
+        bool operator ==(const Iterator& itr) const {
+            return itr.m_iterator != m_iterator;
+        }
+
+        YamlObjectPtr value() const {
+            if (m_object->type() == YamlObject::TypeObject) {
+                return *m_iterator;
+            } else {
+                return m_object->m_variableValue->map[*m_iterator];
+            }
+        }
+
+        YamlObjectPtr key() const {
+            if (m_object->type() == YamlObject::TypeObject) {
+                return *m_iterator;
+            }
+            // TODO 例外処理
+        }
+
+    private:
+        YamlObjectConstPtr m_object;
+        QList<YamlObjectPtr>::const_iterator m_iterator;
+    };
 };
+
+inline void YamlObject::assertType(Type type) const
+{
+#ifdef DEBUG
+        assertTypeImpl(type);
+#endif
+}
+
+inline int YamlObject::integerValue() const
+{
+    assertType(TypeInteger);
+    return m_basicValue.intValue;
+}
+
+inline double YamlObject::floatValue() const
+{
+    assertType(TypeFloat);
+    return m_basicValue.floatValue;
+}
+
+inline bool YamlObject::booleanValue() const
+{
+    assertType(TypeBoolean);
+    return m_basicValue.boolValue;
+}
+
+inline QString YamlObject::stringValue() const
+{
+    assertType(TypeString);
+    return m_stringValue;
+}
+
 }
 
 inline uint qHash(const ActiveYaml::YamlObjectPtr &yamlObject, uint seed = 0)
@@ -120,6 +216,5 @@ inline bool operator==(const ActiveYaml::YamlObjectPtr &lhs, const ActiveYaml::Y
 {
     return *lhs == *rhs;
 }
-
 
 #endif // YAMLOBJECT_H
