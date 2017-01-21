@@ -1,6 +1,6 @@
 #include "selectuiviewmodel.h"
 
-SelectUIViewModel::SelectUIViewModel(QObject *parent) : QObject(parent)
+SelectUIViewModel::SelectUIViewModel(QObject *parent) : UIViewModel(parent)
 {
 
 }
