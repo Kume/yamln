@@ -79,6 +79,7 @@ public:
     YamlObjectPtr remove(const YamlObjectPtr& value);
     Iterator begin() const;
     Iterator end() const;
+    size_t count() const;
 
     // for general
     Type type() const;
@@ -91,6 +92,7 @@ public:
     bool isArray() const;
     bool isString() const;
     bool isInteger() const;
+    bool isCollection() const;
 
     virtual QString toString() const;
 
@@ -100,6 +102,8 @@ private:
 
     void assertType(Type type) const;
     void assertTypeImpl(Type type) const;
+    void assertIsCollection() const;
+    void assertIsCollectionImpl() const;
 
 private:
     Type m_type;
@@ -155,9 +159,9 @@ public:
 
         YamlObjectPtr value() const {
             if (m_object->type() == YamlObject::TypeObject) {
-                return *m_iterator;
-            } else {
                 return m_object->m_variableValue->map[*m_iterator];
+            } else {
+                return *m_iterator;
             }
         }
 
@@ -178,6 +182,13 @@ inline void YamlObject::assertType(Type type) const
 {
 #ifdef DEBUG
         assertTypeImpl(type);
+#endif
+}
+
+inline void YamlObject::assertIsCollection() const
+{
+#ifdef DEBUG
+        assertIsCollectionImpl();
 #endif
 }
 

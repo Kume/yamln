@@ -25,13 +25,6 @@ YamlObjectPtr YamlObject::create()
     return std::move(ptr);
 }
 
-void YamlObject::assertTypeImpl(Type type) const
-{
-    if (m_type != type) {
-        throw ActiveYamlTypeException("");
-    }
-}
-
 YamlObject::~YamlObject()
 {
 
@@ -251,6 +244,12 @@ YamlObject::Iterator YamlObject::end() const
     return Iterator(shared_from_this(), m_variableValue->list.constEnd());
 }
 
+size_t YamlObject::count() const
+{
+    assertIsCollection();
+    return m_variableValue->list.count();
+}
+
 // for general
 YamlObject::Type YamlObject::type() const
 {
@@ -411,6 +410,25 @@ bool YamlObject::isString() const
 bool YamlObject::isInteger() const
 {
     return m_type == TypeInteger;
+}
+
+bool YamlObject::isCollection() const
+{
+    return isArray() || isObject();
+}
+
+void YamlObject::assertTypeImpl(Type type) const
+{
+    if (m_type != type) {
+        throw ActiveYamlTypeException("");
+    }
+}
+
+void YamlObject::assertIsCollectionImpl() const
+{
+    if (!isCollection()) {
+        throw ActiveYamlTypeException("");
+    }
 }
 
 QString YamlObject::toString() const
